@@ -1,0 +1,4 @@
+nf-gpt changelog
+===============
+0.1.0 - 17 Mar 2024
+- Initial version
