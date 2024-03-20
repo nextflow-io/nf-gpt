@@ -18,6 +18,7 @@
 package nextflow.gpt.prompt
 
 import dev.langchain4j.data.message.ChatMessage
+import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.model.openai.OpenAiChatModel
 import groovy.json.JsonSlurper
@@ -40,6 +41,8 @@ class GptPromptModel {
 
     private String model
     private boolean debug
+    private Double temperature
+    private Integer maxTokens
 
     GptPromptModel(Session session) {
         this.config = GptConfig.config(session)
@@ -55,30 +58,51 @@ class GptPromptModel {
         return this
     }
 
+    GptPromptModel withTemperature(Double d) {
+        this.temperature = d
+        return this
+    }
+
+    GptPromptModel withMaxToken(Integer i) {
+        this.maxTokens = i
+        return this
+    }
+
     GptPromptModel build() {
         final modelName = model ?: config.model()
-        log.debug "Creating OpenAI chat model: $modelName; api-key: ${StringUtils.redact(config.apiKey())}"
+        final temp = temperature ?: config.temperature()
+        final tokens = maxTokens ?: config.maxTokens()
+        log.debug "Creating OpenAI chat model: $modelName; api-key: ${StringUtils.redact(config.apiKey())}; temperature: $temp; maxTokens: ${maxTokens}"
         client = OpenAiChatModel.builder()
             .apiKey(config.apiKey())
             .modelName(modelName)
             .logRequests(debug)
             .logResponses(debug)
+            .temperature(temperature)
+            .maxTokens(maxTokens)
             .responseFormat("json_object")
             .build();
         return this
     }
 
-    List<Map<String,Object>> prompt(String query, Map schema) {
-        if( !query )
+    List<Map<String,Object>> prompt(List<ChatMessage> messages, Map schema) {
+        if( !messages )
             throw new IllegalArgumentException("Missing AI prompt")
-        final content =  query + '. ' + renderSchema(schema)
-        final msg = UserMessage.from(content)
+        final all = new ArrayList(messages)
+        all.add(SystemMessage.from(renderSchema(schema)))
         if( debug )
-            log.debug "AI message: $msg"
-        final json = client.generate(List.<ChatMessage>of(msg)).content().text()
+            log.debug "AI message: $all"
+        final json = client.generate(all).content().text()
         if( debug )
             log.debug "AI response: $json"
         return decodeResponse(new JsonSlurper().parseText(json), schema)
+    }
+
+    List<Map<String,Object>> prompt(String query, Map schema) {
+        if( !query )
+            throw new IllegalArgumentException("Missing AI prompt")
+        final msg = UserMessage.from(query)
+        return prompt(List.<ChatMessage>of(msg), schema)
     }
 
     static protected String renderSchema(Map schema) {

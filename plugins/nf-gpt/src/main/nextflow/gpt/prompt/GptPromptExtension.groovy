@@ -39,7 +39,9 @@ class GptPromptExtension extends PluginExtensionPoint {
     static final private Map VALID_PROMPT_OPTS = [
         model: String,
         schema: Map,
-        debug: Boolean
+        debug: Boolean,
+        temperature: Double,
+        maxTokens: Integer
     ]
 
     private Session session

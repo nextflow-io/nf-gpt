@@ -32,10 +32,13 @@ class GptConfig {
 
     static final String DEFAULT_ENDPOINT = 'https://api.openai.com'
     static final String DEFAULT_MODEL = 'gpt-3.5-turbo'
+    static final Double DEFAULT_TEMPERATURE = 0.7d
 
     private String endpoint
     private String apiKey
     private String model
+    private Double temperature
+    private Integer maxTokens
 
     static GptConfig config(Session session) {
         new GptConfig(session.config.ai as Map ?: Collections.emptyMap(), SysEnv.get())
@@ -45,6 +48,7 @@ class GptConfig {
         this.endpoint = opts.endpoint ?: DEFAULT_ENDPOINT
         this.model = opts.model ?: DEFAULT_MODEL
         this.apiKey = opts.apiKey ?: env.get('OPENAI_API_KEY')
+        this.temperature = opts.temperature!=null ? temperature as Double : DEFAULT_TEMPERATURE
     }
 
     String endpoint() {
@@ -57,5 +61,13 @@ class GptConfig {
 
     String model() {
         return model
+    }
+
+    Double temperature() {
+        return temperature
+    }
+
+    Integer maxTokens() {
+        return maxTokens
     }
 }

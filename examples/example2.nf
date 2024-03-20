@@ -5,5 +5,5 @@ Who won most gold medals in swimming and Athletics categories during Barcelona 1
 '''
 
 channel .of(query)
-        .prompt(schema: [athlete: 'string', numberOfMedals: 'number', location:'string'])
+        .prompt(schema: [athlete: 'string', numberOfMedals: 'number', location:'string', sport:'string'])
         .view()

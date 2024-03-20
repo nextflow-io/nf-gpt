@@ -45,6 +45,30 @@ nextflow run <my script>
 
 See the folder [examples] for more examples
 
+### Options 
+
+The `prompt` operator support those options 
+
+| name          | description |
+|---------------|-------------|
+| model         | The AI model to be used (default: `gpt-3.5-turbo`) |
+| maxTokens     | The maximum number of tokens that can be generated in the chat completion |
+| schema        | The expected strcuture for the result object represented as map object in which represent the attribute name and the value the attribute type |
+| temperature   | What sampling temperature to use, between 0 and 2 (default: `0.7`) |
+
+### Configuration file 
+
+The following config options can be specified in the `nextflow.config` file: 
+
+
+| name          | description |
+|---------------|-------------|
+| gpt.apiKey        | Your OpenAI API key. If missing it uses the `OPENAI_API_KEY` env variable | 
+| gpt.endpoint      | The OpenAI endpoint (defualt: `https://api.openai.com`)   |
+| gpt.model         | The AI model to be used (default: `gpt-3.5-turbo`) |
+| gpt.maxTokens     | The maximum number of tokens that can be generated in the chat completion |
+| gpt.temperature   | What sampling temperature to use, between 0 and 2 (default: `0.7`) |
+
 
 ## Testing and debugging
 
