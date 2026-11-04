@@ -1,0 +1,46 @@
+name: nf-gpt CI
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+jobs:
+  build:
+    name: Build nf-gpt
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        java_version: [11, 21]
+
+    steps:
+      - name: Environment
+        run: env | sort
+
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # ratchet:actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Setup Java ${{ matrix.java_version }}
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # ratchet:actions/setup-java@v4
+        with:
+          java-version: ${{matrix.java_version}}
+          architecture: x64
+          distribution: 'temurin'
+
+      - name: Compile
+        run: ./gradlew assemble
+
+      - name: Tests
+        run: ./gradlew check
+        env:
+          GRADLE_OPTS: '-Dorg.gradle.daemon=false'
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

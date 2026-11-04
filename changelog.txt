@@ -1,0 +1,16 @@
+nf-gpt changelog
+===============
+0.4.0 - 15 Apr 2024
+- Add Gpt task tip provider [4b0037a7]
+- Bump nextflow 24.03.0-edge requirement [2df6734]
+- Fix tests [1e129222]
+
+0.3.0 - 5 Apr 2024
+- Add `gptPromptForText` and `gptPromptForText` funtions
+- Fix temperature & maxToken params [6b3584bf]
+- Bump actions @4 [7750bb34]
+
+0.2.0 - 15 Mar 2024
+
+0.1.0 - 17 Mar 2024
+- Initial version
